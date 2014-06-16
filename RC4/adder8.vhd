@@ -19,10 +19,11 @@
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+USE ieee.std_logic_unsigned.ALL; 
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
-use IEEE.NUMERIC_STD.ALL;
+--use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx primitives in this code.
@@ -35,6 +36,5 @@ entity adder is
 end adder;  
 architecture main of adder is  
   begin  
-    SUM <= to_integer(unsigned(A)) + to_integer(unsigned(B));  
-end main; 
-
+    SUM <= A + B;  
+end main;

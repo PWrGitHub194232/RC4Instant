@@ -59,7 +59,7 @@ architecture Behavioral of top_component is
 
 component k_box is
 	Port ( 
-		k_box_key_input : in  STD_LOGIC_VECTOR (key_size downto 0);
+		k_box_key_input : in  STD_LOGIC_VECTOR (key_size-1 downto 0);
 		k_box_key_read : in  STD_LOGIC;
 		k_box_key_write : in  STD_LOGIC;
 		k_box_address : in  STD_LOGIC_VECTOR (s_box_size-1 downto 0);
@@ -70,10 +70,10 @@ end component;
 
 component mux is
 	port(
-		mux_input_1 : in std_logic;
-		mux_input_2 : in std_logic;
+		mux_input_1 : in STD_LOGIC_VECTOR (word_size-1 downto 0);
+		mux_input_2 : in STD_LOGIC_VECTOR (word_size-1 downto 0);
 		mux_swith : in std_logic;
-		mux_output : out std_logic);
+		mux_output : out STD_LOGIC_VECTOR (word_size-1 downto 0));
 end component;
 
 component adder is
@@ -112,7 +112,7 @@ component s_box is
 end component;
 
 
-signal empty : std_logic:='0';
+signal empty : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 signal k_box_key_mux : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 
 signal mux_adder_j_Kbox : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
@@ -120,6 +120,15 @@ signal adder_j_adder_Kbox_Sbox : STD_LOGIC_VECTOR (word_size-1 downto 0) := (oth
 signal adder_jKS_ffj : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 signal ffj_adder_jK : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 signal si_adder_jKS : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+
+-- Sbox output signals
+signal si_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+signal sj_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+signal st_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+
+-- Sbox input signals
+signal si_inSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+signal sj_inSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 
 begin
 
@@ -181,27 +190,27 @@ port map (
 	s_box_counter_t => counter_t_Sbox,
 	s_box_out_Si => si_outSignal,
 	s_box_out_Sj => sj_outSignal,
-	s_box_out_St => stream
+	s_box_out_St => st_outSignal
 );
 
 ff_Si : D_flip_flop
 port map (
 	clock => clock,
-	D => si_outSignal,
-	Q => counter_Sj_Sbox 
+	D => Sbox_si_outSignal,
+	Q => Sbox_sj_inSignal 
 );
 
 ff_Sj : D_flip_flop
 port map (
 	clock => clock,
-	D => sj_outSignal,
-	Q => counter_Si_Sbox
+	D => Sbox_sj_outSignal,
+	Q => Sbox_si_inSignal
 );
 
 adder_Si_Sj : adder
 port map (
-	A => si_outSignal,
-	B => sj_outSignal,
+	A => Sbox_si_outSignal,
+	B => SBox_sj_outSignal,
 	SUM => adder_Si_Sj_fft
 );
 

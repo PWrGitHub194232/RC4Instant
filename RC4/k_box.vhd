@@ -39,9 +39,9 @@ use IEEE.NUMERIC_STD.ALL;
 --		na wyjściu w razie potrzeby.
 
 entity k_box is
-	 generic (key_size : natural := 127;
+	 generic (key_size : natural := 128;
 				word_size : natural := 8);
-    Port ( key_input : in  STD_LOGIC_VECTOR (key_size downto 0);
+    Port ( key_input : in  STD_LOGIC_VECTOR (key_size-1 downto 0);
            key_read : in  STD_LOGIC;
            key_write : in  STD_LOGIC;
 			  address : in  STD_LOGIC_VECTOR (word_size-1 downto 0);

@@ -30,12 +30,13 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity mux is
+	generic (
+		word_size : natural := 8);
 	port(
-		input_1 : in std_logic;
-		input_2 : in std_logic;
+		input_1 : in STD_LOGIC_VECTOR (word_size-1 downto 0);
+		input_2 : in STD_LOGIC_VECTOR (word_size-1 downto 0);
 		swith : in std_logic;
-		output : out std_logic
-	);
+		output : out STD_LOGIC_VECTOR (word_size-1 downto 0));
 end mux;
  
 architecture main of mux is
