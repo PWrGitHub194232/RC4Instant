@@ -39,8 +39,10 @@ entity mux is
 		mux_output : out STD_LOGIC_VECTOR (word_size-1 downto 0));
 end mux;
  
-architecture main of mux is
+architecture Behavioral of mux is
 begin
-with mux_swith select mux_output <= mux_input_1 when '0', mux_input_2 when '1';
-end main;
+	with mux_swith select mux_output <= 
+		mux_input_1 when '0', 
+		mux_input_2 when '1';
+end Behavioral;
 
