@@ -47,12 +47,12 @@ entity top_component is
            j_write_Sbox : in  STD_LOGIC;
            t_read_Sbox : in  STD_LOGIC;
            t_write_Sbox : in  STD_LOGIC;
-           counter_i_Sbox : in  STD_LOGIC_VECTOR (word_size downto 0);
-           counter_Sj_Sbox : in  STD_LOGIC_VECTOR (word_size downto 0);
-           counter_j_Sbox : in  STD_LOGIC_VECTOR (word_size downto 0);
-           counter_Si_Sbox : in  STD_LOGIC_VECTOR (word_size downto 0);
-           counter_t_Sbox : in  STD_LOGIC_VECTOR (word_size downto 0);
-           stream : out  STD_LOGIC_VECTOR (word_size downto 0));
+           counter_i_Sbox : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
+           counter_Sj_Sbox : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
+           counter_j_Sbox : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
+           counter_Si_Sbox : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
+           counter_t_Sbox : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
+           stream : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
 end top_component;
 
 architecture Behavioral of top_component is
