@@ -22,25 +22,37 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx primitives in this code.
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
+------------------------------------------------------------------------
+-- k_box pobiera klucz danej długości key_size.
+-- address jest dzielonym sygnałem razem z SBox'em.
+--		Jeśli klucz jest mniejszy od rozmiarów SBox'a to robimy modulo.
+-- Gdy key_write='1' to zapełniaj kolejne elementy tablicy key_table[address].
+-- Gdy key_read='1' to wystawiaj klucz[address % (key_size+1)] - udajemy,
+--		że tablica KBox'a jest równa rozmiarom SBox'a. Zatem powtarzamy klucz 
+--		na wyjściu w razie potrzeby.
+
 entity k_box is
-    Port ( key_input : in  STD_LOGIC_VECTOR (127 downto 0);
+	 generic (key_size : natural := 127;
+				word_size : natural := 8);
+    Port ( key_input : in  STD_LOGIC_VECTOR (key_size downto 0);
            key_read : in  STD_LOGIC;
            key_write : in  STD_LOGIC;
+			  address : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
            reset : in  STD_LOGIC;
            clk : in  STD_LOGIC;
-           key_out : out  STD_LOGIC_VECTOR (7 downto 0));
+           key_out : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
 end k_box;
 
 architecture Behavioral of k_box is
 
-	type key_table is array (0 to 127) of std_logic_vector(key_out'range);
+	type key_table is array (0 to key_size) of std_logic_vector(key_out'range);
 	signal key : key_table;
 
 begin
@@ -48,12 +60,11 @@ begin
 	key_process: process(clk) is
 	begin
 		if(key_write='1') then
-			key(to_integer(unsigned(address))) <= key_input;			
+			key((to_integer(signed(address)) mod (key_size+1))) <= key_input;		
 		end if;
 		if(key_read='1') then
-			key_out <= key(to_integer(unsigned(address)));
+			key_out <= key((to_integer(signed(address)) mod (key_size+1)));
 		end if;
 	end process key_process;
 
 end Behavioral;
-

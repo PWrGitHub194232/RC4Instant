@@ -49,11 +49,17 @@ begin
 	ram_process: process(clock) is
 	begin
 	if(rising_edge(clock)) then
-		if(data_write='1') then
-			ram(to_integer(unsigned(address))) <= data;			
-		end if;
-		if(data_read='1') then
-			output <= ram(to_integer(unsigned(address)));
+		if(reset='0') then
+			if(data_write='1') then
+				ram(to_integer(unsigned(address))) <= data;			
+			end if;
+			if(data_read='1') then
+				output <= ram(to_integer(unsigned(address)));
+			end if;
+		else
+			for i in 0 to ram_table'length loop 
+				ram(to_integer(unsigned(std_logic_vector(to_unsigned(i,8))))) <= std_logic_vector(to_unsigned(i,8));
+			end loop;
 		end if;
 	end if;
 	end process ram_process;
