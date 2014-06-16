@@ -29,7 +29,7 @@ use IEEE.NUMERIC_STD.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity top_component is
+entity storage_unit is
 	generic (key_size : natural := 127;
 		word_size : natural := 8;
 		s_box_size : natural := 8);
@@ -49,11 +49,13 @@ entity top_component is
 		t_write_Sbox : in  STD_LOGIC;
 		counter_i_Sbox_Kbox : in  STD_LOGIC_VECTOR (s_box_size-1 downto 0);
 		j_enable : in  STD_LOGIC;
+		j_reset : in  STD_LOGIC;
 		t_enable : in  STD_LOGIC;
+		t_reset : in  STD_LOGIC;
 		stream : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
-end top_component;
+end storage_unit;
 
-architecture Behavioral of top_component is
+architecture Behavioral of storage_unit is
 
 component k_box is
 	Port ( 
@@ -110,14 +112,28 @@ component D_flip_flop is
 end component;
 
 -- DFF output signals
---ff_j
-signal DFF_j_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 --ff_Si
 signal DFF_Si_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 --ff_Sj
 signal DFF_Sj_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+
+
+component D_flip_flop_deluxe is
+	generic (
+		word_size : natural := 8);
+	Port ( 
+		D : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
+		clock : in  STD_LOGIC;
+		reset : in  STD_LOGIC;
+		enable : in  STD_LOGIC;
+		Q : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
+end component;
+
+-- DFFD output signals
+--ff_j
+signal DFFD_j_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 --ff_t
-signal DFF_t_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+signal DFFD_t_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 
 
 component s_box is
@@ -148,7 +164,7 @@ signal Sbox_sj_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others =>
 --DFF_Si_outSignal -> Sj
 --Add_jKS_outSignal -> j
 --DFF_Sj_outSignal -> Si
--- DFF_t_outSignal -> t
+-- DFFD_t_outSignal -> t
 
 
 begin
@@ -175,7 +191,7 @@ port map (
 
 adder_j_Kbox : adder
 port map (
-	A => DFF_j_outSignal,
+	A => DFFD_j_outSignal,
 	B => Mux_outSignal,
 	SUM => Add_jK_outSignal
 );
@@ -187,12 +203,13 @@ port map (
 	SUM => Add_jKS_outSignal
 );
 
-ff_j : D_flip_flop
+ff_j : D_flip_flop_deluxe
 port map (
-	clock => clock,
 	D => Add_jKS_outSignal,
-	Q => DFF_j_outSignal
-	--j_enable
+	clock => clock,
+	reset => j_reset,
+	enable => j_enable,
+	Q => DFFD_j_outSignal
 );
 
 main_S_box : s_box
@@ -209,7 +226,7 @@ port map (
 	s_box_counter_Sj => DFF_Si_outSignal,
 	s_box_counter_j => Add_jKS_outSignal,
 	s_box_counter_Si => DFF_Sj_outSignal,
-	s_box_counter_t => DFF_t_outSignal,
+	s_box_counter_t => DFFD_t_outSignal,
 	s_box_out_Si => Sbox_si_outSignal,
 	s_box_out_Sj => Sbox_sj_outSignal,
 	s_box_out_St => stream
@@ -236,12 +253,13 @@ port map (
 	SUM => Add_Si_Sj_outSignal
 );
 
-ff_t : D_flip_flop
+ff_t : D_flip_flop_deluxe
 port map (
-	clock => clock,
 	D => Add_Si_Sj_outSignal,
-	Q => DFF_t_outSignal
-	-- t_enable
+	clock => clock,
+	reset => t_reset,
+	enable => t_enable,
+	Q => DFFD_t_outSignal
 );
 
 end Behavioral;

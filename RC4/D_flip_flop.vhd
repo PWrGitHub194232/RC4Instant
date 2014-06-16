@@ -30,19 +30,21 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity D_flip_flop is
+	generic (
+		word_size : natural := 8);
 	Port ( 
 		clock : in STD_LOGIC;
-		D : in  STD_LOGIC_VECTOR (7 downto 0);
-		Q : out STD_LOGIC_VECTOR (7 downto 0));
+		D : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
+		Q : out STD_LOGIC_VECTOR (word_size-1 downto 0));
 end D_flip_flop;
 
 architecture Behavioral of D_flip_flop is
 
 begin
-	dff_process: process (D,clock) is
+	dff_process: process ( clock ) is
 
 	begin
-		if clock = '1' then
+		if rising_edge(clock) then 
 			Q <= D ;
 		end if;
 	end process; 

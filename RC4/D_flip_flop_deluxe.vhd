@@ -30,28 +30,26 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity D_flip_flop_deluxe is
-    Port ( val : in  STD_LOGIC_VECTOR (7 downto 0);
-           clk : in  STD_LOGIC;
-           reset : in  STD_LOGIC;
-           enable : in  STD_LOGIC;
-           output : out  STD_LOGIC_VECTOR (7 downto 0));
+	generic (
+		word_size : natural := 8);
+	Port ( 
+		D : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
+		clock : in  STD_LOGIC;
+		reset : in  STD_LOGIC;
+		enable : in  STD_LOGIC;
+		Q : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
 end D_flip_flop_deluxe;
 
 architecture Behavioral of D_flip_flop_deluxe is
 
 begin
-		dffd_process: process (D,clock) is
-		begin
-		if(rising_edge(clk)) then
-			if reset='0' then
-				if enable='1' then
-					output <= val;
-				end if;
-			else
-				output <= '0';
-			end if;
+	dffd_process: process (clock) is
+	begin
+		if enable='0' then 
+			null;
+		elsif rising_edge(clock) then
+			Q <= D;
 		end if;
-	end process; 
-
+	end process;
+	
 end Behavioral;
-
