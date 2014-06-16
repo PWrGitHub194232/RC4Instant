@@ -42,16 +42,14 @@ entity top_component is
 		key_sel_Mux : in  STD_LOGIC;
 		reset_Sbox : in  STD_LOGIC;
 		i_read_Sbox : in  STD_LOGIC;
-		i_write_Sbox : in  STD_LOGIC;
 		j_read_Sbox : in  STD_LOGIC;
-		j_write_Sbox : in  STD_LOGIC;
 		t_read_Sbox : in  STD_LOGIC;
+		i_write_Sbox : in  STD_LOGIC;
+		j_write_Sbox : in  STD_LOGIC;
 		t_write_Sbox : in  STD_LOGIC;
 		counter_i_Sbox_Kbox : in  STD_LOGIC_VECTOR (s_box_size-1 downto 0);
-		counter_Sj_Sbox : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
-		counter_j_Sbox : in  STD_LOGIC_VECTOR (s_box_size-1 downto 0);
-		counter_Si_Sbox : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
-		counter_t_Sbox : in  STD_LOGIC_VECTOR (s_box_size-1 downto 0);
+		j_enable : in  STD_LOGIC;
+		t_enable : in  STD_LOGIC;
 		stream : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
 end top_component;
 
@@ -68,6 +66,12 @@ component k_box is
 		k_box_key_out : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
 end component;
 
+-- Kbox output signals
+signal Kbox_key_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+
+-- Kbox input signals
+
+
 component mux is
 	port(
 		mux_input_1 : in STD_LOGIC_VECTOR (word_size-1 downto 0);
@@ -76,6 +80,12 @@ component mux is
 		mux_output : out STD_LOGIC_VECTOR (word_size-1 downto 0));
 end component;
 
+-- MUX output signals
+signal Mux_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+
+-- MUX input signals
+signal Mux_empty_inSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+
 component adder is
 	port(
 		A : in std_logic_vector(word_size-1 downto 0);
@@ -83,12 +93,31 @@ component adder is
 		SUM : out std_logic_vector(word_size-1 downto 0));
 end component;
 
+-- ADDER output signals
+--adder_jK
+signal Add_jK_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+--adder_jKS
+signal Add_jKS_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+--adder_Si_Sj
+signal Add_Si_Sj_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+
+
 component D_flip_flop is
 	port(
 		clock : in STD_LOGIC;
 		D : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
 		Q : out STD_LOGIC_VECTOR (word_size-1 downto 0));
 end component;
+
+-- DFF output signals
+--ff_j
+signal DFF_j_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+--ff_Si
+signal DFF_Si_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+--ff_Sj
+signal DFF_Sj_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+--ff_t
+signal DFF_t_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 
 
 component s_box is
@@ -111,24 +140,16 @@ component s_box is
 		s_box_out_St : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
 end component;
 
-
-signal empty : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
-signal k_box_key_mux : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
-
-signal mux_adder_j_Kbox : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
-signal adder_j_adder_Kbox_Sbox : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
-signal adder_jKS_ffj : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
-signal ffj_adder_jK : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
-signal si_adder_jKS : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
-
 -- Sbox output signals
-signal si_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
-signal sj_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
-signal st_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+signal Sbox_si_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+signal Sbox_sj_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 
 -- Sbox input signals
-signal si_inSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
-signal sj_inSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+--DFF_Si_outSignal -> Sj
+--Add_jKS_outSignal -> j
+--DFF_Sj_outSignal -> Si
+-- DFF_t_outSignal -> t
+
 
 begin
 
@@ -141,36 +162,37 @@ port map (
 	k_box_address => counter_i_Sbox_Kbox,
 	k_box_reset => reset_Kbox,
 	k_box_clk => clock,
-	k_box_key_out => k_box_key_mux
+	k_box_key_out => Kbox_key_outSignal
 );
 
 main_mux : mux
 port map (
-	mux_input_1 => k_box_key_mux,
-	mux_input_2 => empty,
+	mux_input_1 => Kbox_key_outSignal,
+	mux_input_2 => Mux_empty_inSignal,
 	mux_swith => key_sel_Mux,
-	mux_output => mux_adder_j_Kbox
+	mux_output => Mux_outSignal
 );
 
 adder_j_Kbox : adder
 port map (
-	A => ffj_adder_jK,
-	B => mux_adder_j_Kbox,
-	SUM => adder_j_adder_Kbox_Sbox
+	A => DFF_j_outSignal,
+	B => Mux_outSignal,
+	SUM => Add_jK_outSignal
 );
 
-adder_j_Kbox_Sbox : adder
+adder_jKS : adder
 port map (
-	A => adder_j_adder_Kbox_Sbox,
-	B => si_adder_jKS,
-	SUM => adder_jKS_ffj
+	A => Add_jK_outSignal,
+	B => Sbox_si_outSignal,
+	SUM => Add_jKS_outSignal
 );
 
 ff_j : D_flip_flop
 port map (
 	clock => clock,
-	D => adder_jKS_ffj,
-	Q => ffj_adder_jK
+	D => Add_jKS_outSignal,
+	Q => DFF_j_outSignal
+	--j_enable
 );
 
 main_S_box : s_box
@@ -184,42 +206,42 @@ port map (
 	s_box_t_read => t_read_Sbox,
 	s_box_t_write => t_write_Sbox,
 	s_box_counter_i => counter_i_Sbox_Kbox,
-	s_box_counter_Sj => counter_Sj_Sbox,
-	s_box_counter_j => counter_j_Sbox,
-	s_box_counter_Si => counter_Si_Sbox,
-	s_box_counter_t => counter_t_Sbox,
-	s_box_out_Si => si_outSignal,
-	s_box_out_Sj => sj_outSignal,
-	s_box_out_St => st_outSignal
+	s_box_counter_Sj => DFF_Si_outSignal,
+	s_box_counter_j => Add_jKS_outSignal,
+	s_box_counter_Si => DFF_Sj_outSignal,
+	s_box_counter_t => DFF_t_outSignal,
+	s_box_out_Si => Sbox_si_outSignal,
+	s_box_out_Sj => Sbox_sj_outSignal,
+	s_box_out_St => stream
 );
 
 ff_Si : D_flip_flop
 port map (
 	clock => clock,
 	D => Sbox_si_outSignal,
-	Q => Sbox_sj_inSignal 
+	Q => DFF_Si_outSignal 
 );
 
 ff_Sj : D_flip_flop
 port map (
 	clock => clock,
 	D => Sbox_sj_outSignal,
-	Q => Sbox_si_inSignal
+	Q => DFF_Sj_outSignal
 );
 
 adder_Si_Sj : adder
 port map (
 	A => Sbox_si_outSignal,
-	B => SBox_sj_outSignal,
-	SUM => adder_Si_Sj_fft
+	B => Sbox_sj_outSignal,
+	SUM => Add_Si_Sj_outSignal
 );
 
 ff_t : D_flip_flop
 port map (
 	clock => clock,
-	D => adder_Si_Sj_fft,
-	Q => fft_Sboxt
+	D => Add_Si_Sj_outSignal,
+	Q => DFF_t_outSignal
+	-- t_enable
 );
 
 end Behavioral;
-
