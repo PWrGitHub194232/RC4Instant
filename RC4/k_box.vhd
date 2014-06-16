@@ -39,31 +39,35 @@ use IEEE.NUMERIC_STD.ALL;
 --		na wyjściu w razie potrzeby.
 
 entity k_box is
-	 generic (key_size : natural := 128;
-				word_size : natural := 8);
-    Port ( key_input : in  STD_LOGIC_VECTOR (key_size-1 downto 0);
-           key_read : in  STD_LOGIC;
-           key_write : in  STD_LOGIC;
-			  address : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
-           reset : in  STD_LOGIC;
-           clk : in  STD_LOGIC;
-           key_out : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
+	generic (
+		key_size : natural := 127;
+		word_size : natural := 8;
+		s_box_size : natural := 8);
+	Port ( 
+		k_box_key_input : in  STD_LOGIC_VECTOR (key_size-1 downto 0);
+		k_box_key_read : in  STD_LOGIC;
+		k_box_key_write : in  STD_LOGIC;
+		k_box_address : in  STD_LOGIC_VECTOR (s_box_size-1 downto 0);
+		k_box_reset : in  STD_LOGIC;
+		k_box_clk : in  STD_LOGIC;
+		k_box_key_out : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
 end k_box;
+
 
 architecture Behavioral of k_box is
 
-	type key_table is array (0 to key_size) of std_logic_vector(key_out'range);
+	type key_table is array (0 to key_size) of std_logic_vector(k_box_key_out'range);
 	signal key : key_table;
 
 begin
 
-	key_process: process(clk) is
+	key_process: process(k_box_clk) is
 	begin
-		if(key_write='1') then
-			key((to_integer(signed(address)) mod (key_size+1))) <= key_input;		
+		if(k_box_key_write='1') then
+			key((to_integer(signed(k_box_address)) mod (key_size+1))) <= k_box_key_input;		
 		end if;
-		if(key_read='1') then
-			key_out <= key((to_integer(signed(address)) mod (key_size+1)));
+		if(k_box_key_read='1') then
+			k_box_key_out <= key((to_integer(signed(k_box_address)) mod (key_size+1)));
 		end if;
 	end process key_process;
 
