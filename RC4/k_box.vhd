@@ -48,10 +48,10 @@ begin
 	key_process: process(clk) is
 	begin
 		if(key_write='1') then
-			ram(to_integer(unsigned(address))) <= data;			
+			key(to_integer(unsigned(address))) <= key_input;			
 		end if;
 		if(key_read='1') then
-			output <= ram(to_integer(unsigned(address)));
+			key_out <= key(to_integer(unsigned(address)));
 		end if;
 	end process key_process;
 
