@@ -33,14 +33,14 @@ entity mux is
 	generic (
 		word_size : natural := 8);
 	port(
-		input_1 : in STD_LOGIC_VECTOR (word_size-1 downto 0);
-		input_2 : in STD_LOGIC_VECTOR (word_size-1 downto 0);
-		swith : in std_logic;
-		output : out STD_LOGIC_VECTOR (word_size-1 downto 0));
+		mux_input_1 : in STD_LOGIC_VECTOR (word_size-1 downto 0);
+		mux_input_2 : in STD_LOGIC_VECTOR (word_size-1 downto 0);
+		mux_swith : in std_logic;
+		mux_output : out STD_LOGIC_VECTOR (word_size-1 downto 0));
 end mux;
  
 architecture main of mux is
 begin
-with swith select output <= input_1 when '0', input_2 when '1';
+with mux_swith select mux_output <= mux_input_1 when '0', mux_input_2 when '1';
 end main;
 

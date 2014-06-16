@@ -30,22 +30,22 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 entity s_box is
-    Port ( clock : in  STD_LOGIC;
-           reset : in  STD_LOGIC;
-           i_read : in  STD_LOGIC;
-           i_write : in  STD_LOGIC;
-           j_read : in  STD_LOGIC;
-           j_write : in  STD_LOGIC;
-           t_read : in  STD_LOGIC;
-           t_write : in  STD_LOGIC;
-           counter_i : in  STD_LOGIC_VECTOR (7 downto 0);
-           counter_Sj : in  STD_LOGIC_VECTOR (7 downto 0);
-           counter_j : in  STD_LOGIC_VECTOR (7 downto 0);
-           counter_Si : in  STD_LOGIC_VECTOR (7 downto 0);
-           counter_t : in  STD_LOGIC_VECTOR (7 downto 0);
-           out_Si : out  STD_LOGIC_VECTOR (7 downto 0);
-           out_Sj : out  STD_LOGIC_VECTOR (7 downto 0);
-           out_St : out  STD_LOGIC_VECTOR (7 downto 0));
+    Port ( s_box_clock : in  STD_LOGIC;
+           s_box_reset : in  STD_LOGIC;
+           s_box_i_read : in  STD_LOGIC;
+           s_box_i_write : in  STD_LOGIC;
+           s_box_j_read : in  STD_LOGIC;
+           s_box_j_write : in  STD_LOGIC;
+           s_box_t_read : in  STD_LOGIC;
+           s_box_t_write : in  STD_LOGIC;
+           s_box_counter_i : in  STD_LOGIC_VECTOR (7 downto 0);
+           s_box_counter_Sj : in  STD_LOGIC_VECTOR (7 downto 0);
+           s_box_counter_j : in  STD_LOGIC_VECTOR (7 downto 0);
+           s_box_counter_Si : in  STD_LOGIC_VECTOR (7 downto 0);
+           s_box_counter_t : in  STD_LOGIC_VECTOR (7 downto 0);
+           s_box_out_Si : out  STD_LOGIC_VECTOR (7 downto 0);
+           s_box_out_Sj : out  STD_LOGIC_VECTOR (7 downto 0);
+           s_box_out_St : out  STD_LOGIC_VECTOR (7 downto 0));
 end s_box;
 
 architecture Behavioral of s_box is
@@ -66,35 +66,35 @@ begin
 
 ram_i : ram_block
 port map (
-	clock => clock,
-	data => counter_i,
-	address => counter_Si,
-	data_read => i_read,
-	data_write => i_write,
-	reset => reset,
-	output => out_Si
+	clock => s_box_clock,
+	data => s_box_counter_i,
+	address => s_box_counter_Si,
+	data_read => s_box_i_read,
+	data_write => s_box_i_write,
+	reset => s_box_reset,
+	output => s_box_out_Si
 );
 
 ram_j : ram_block
 port map (
-	clock => clock,
-	data => counter_j,
-	address => counter_Sj,
-	data_read => j_read,
-	data_write => j_write,
-	reset => reset,
-	output => out_Sj
+	clock => s_box_clock,
+	data => s_box_counter_j,
+	address => s_box_counter_Sj,
+	data_read => s_box_j_read,
+	data_write => s_box_j_write,
+	reset => s_box_reset,
+	output => s_box_out_Sj
 );
 
 ram_t : ram_block
 port map (
-	clock => clock,
-	data => counter_i, --BDNE ALE NIE WIEM GDZIE TO PODPI PKI CO
-	address => counter_t,
-	data_read => t_read,
-	data_write => t_write,
-	reset => reset,
-	output => out_St
+	clock => s_box_clock,
+	data => s_box_counter_i, --BDNE ALE NIE WIEM GDZIE TO PODPI PKI CO
+	address => s_box_counter_t,
+	data_read => s_box_t_read,
+	data_write => s_box_t_write,
+	reset => s_box_reset,
+	output => s_box_out_St
 );
 
 end Behavioral;
