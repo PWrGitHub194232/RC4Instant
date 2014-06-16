@@ -30,16 +30,16 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity mux is
-port(
-A: in std_logic;
-B: in std_logic;
-S: in std_logic;
-Z: out std_logic
-);
+	port(
+		input_1 : in std_logic;
+		input_2 : in std_logic;
+		swith : in std_logic;
+		output : out std_logic
+	);
 end mux;
  
 architecture main of mux is
 begin
-with S select Z <= A when '0', B when '1';
+with swith select output <= input_1 when '0', input_2 when '1';
 end main;
 

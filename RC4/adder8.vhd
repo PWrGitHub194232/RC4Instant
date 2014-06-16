@@ -35,6 +35,6 @@ entity adder is
 end adder;  
 architecture main of adder is  
   begin  
-    SUM <= A + B;  
+    SUM <= to_integer(unsigned(A)) + to_integer(unsigned(B));  
 end main; 
 

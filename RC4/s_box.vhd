@@ -43,9 +43,9 @@ entity s_box is
            counter_j : in  STD_LOGIC_VECTOR (7 downto 0);
            counter_Si : in  STD_LOGIC_VECTOR (7 downto 0);
            counter_t : in  STD_LOGIC_VECTOR (7 downto 0);
-           out_i : out  STD_LOGIC_VECTOR (7 downto 0);
-           out_j : out  STD_LOGIC_VECTOR (7 downto 0);
-           out_t : out  STD_LOGIC_VECTOR (7 downto 0));
+           out_Si : out  STD_LOGIC_VECTOR (7 downto 0);
+           out_Sj : out  STD_LOGIC_VECTOR (7 downto 0);
+           out_St : out  STD_LOGIC_VECTOR (7 downto 0));
 end s_box;
 
 architecture Behavioral of s_box is
@@ -72,7 +72,7 @@ port map (
 	data_read => i_read,
 	data_write => i_write,
 	reset => reset,
-	output => out_i
+	output => out_Si
 );
 
 ram_j : ram_block
@@ -83,7 +83,7 @@ port map (
 	data_read => j_read,
 	data_write => j_write,
 	reset => reset,
-	output => out_j
+	output => out_Sj
 );
 
 ram_t : ram_block
@@ -94,7 +94,7 @@ port map (
 	data_read => t_read,
 	data_write => t_write,
 	reset => reset,
-	output => out_t
+	output => out_St
 );
 
 end Behavioral;
