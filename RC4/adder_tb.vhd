@@ -59,6 +59,14 @@ ARCHITECTURE behavior OF adder_tb IS
  
    constant clock_period : time := 10 ns;
  
+ --Test vectors
+	type test_vector_array is array (natural range <>)	of natural;
+	type test_vector_array_bin is array (natural range <>) of std_logic;
+	constant test_vectors_dataA : test_vector_array :=
+		(20,	50	,	105,	138,	201,	222,	234,	45,	34,	12,	65,	87,	128);
+	constant test_vectors_dataB : test_vector_array :=
+		(0	,	1	,	2	,	3	,	4	,	3	,	6	,	6	,	4	,	8	,	2	,	1	,	8);
+		
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
@@ -67,15 +75,6 @@ BEGIN
           B => B,
           SUM => SUM
         );
-
-   -- Clock process definitions
-   clock_process :process
-   begin
-		clock <= '0';
-		wait for clock_period/2;
-		clock <= '1';
-		wait for clock_period/2;
-   end process;
  
 
    -- Stimulus process

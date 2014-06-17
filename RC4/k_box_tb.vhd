@@ -30,7 +30,7 @@ USE ieee.std_logic_1164.ALL;
  
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---USE ieee.numeric_std.ALL;
+USE ieee.numeric_std.ALL;
  
 ENTITY k_box_tb IS
 END k_box_tb;
@@ -55,7 +55,7 @@ ARCHITECTURE behavior OF k_box_tb IS
    --Inputs
    signal k_box_key_input : std_logic_vector(126 downto 0) := (others => '0');
    signal k_box_key_read : std_logic := '0';
-   signal k_box_key_write : std_logic := '0';
+   signal k_box_key_write : std_logic := '1';
    signal k_box_address : std_logic_vector(7 downto 0) := (others => '0');
    signal k_box_reset : std_logic := '0';
    signal k_box_clk : std_logic := '0';
@@ -65,6 +65,25 @@ ARCHITECTURE behavior OF k_box_tb IS
 
    -- Clock period definitions
    constant k_box_clk_period : time := 10 ns;
+	
+	signal a : natural := 0;
+	--Test vectors
+	type test_vector_array is array (natural range <>)	of natural;
+	type test_vector_array_bin is array (natural range <>) of std_logic;
+
+	constant test_vectors_read : test_vector_array_bin :=
+		--('0',	'0',	'0',	'0',	'0',	'1',	'0',	'1',	'1',	'1',	'1',	'1',	'1');
+		('0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'1');
+		
+	constant test_vectors_write : test_vector_array_bin :=
+		('0',	'0',	'0',	'0',	'0',	'0',	'0',	'0'	,'0',	'0',	'0',	'0',	'0');
+ 
+ 	constant test_vectors_address : test_vector_array :=
+		--(0	,	1	,	2	,	3	,	4	,	3	,	6	,	6	,	4	,	8	,	2	,	1	,	8);
+		(0	,	1	,	2	,	3	,	4	,	5	,	6	,	7	,	8	,	9	,	10	,	11	,	6);
+	
+	constant test_vectors_reset : test_vector_array_bin :=
+		('1',	'1',	'1',	'1',	'1',	'1',	'1',	'1'	,'1',	'1',	'1',	'1',	'0');
  
 BEGIN
  
@@ -97,8 +116,26 @@ BEGIN
 
       wait for k_box_clk_period*10;
 
-      -- insert stimulus here 
+		-- insert stimulus here 
+	
+		a <= 0;
+		WHILE a < 16 LOOP
+			k_box_address <= STD_LOGIC_VECTOR(TO_UNSIGNED( test_vectors_address(a mod 12), 8 ) );
+			a <= a+1;
+			wait for k_box_clk_period;
+		end loop;
 
+		k_box_key_read <= '1';
+		k_box_key_write <= '0';
+
+		a <= 0;
+		WHILE a < 14 LOOP
+			k_box_address <= STD_LOGIC_VECTOR(TO_UNSIGNED( test_vectors_address(a mod 12), 8 ) );
+			a <= a+1;
+			wait for k_box_clk_period;
+		end loop;
+		
+		
       wait;
    end process;
 

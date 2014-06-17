@@ -27,11 +27,10 @@
 --------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
-use IEEE.numeric_std.all;
  
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---USE ieee.numeric_std.ALL;
+USE ieee.numeric_std.ALL;
  
 ENTITY ram_block_tb IS
 END ram_block_tb;
@@ -73,14 +72,22 @@ ARCHITECTURE behavior OF ram_block_tb IS
 	type test_vector_array is array (natural range <>)	of natural;
 	type test_vector_array_bin is array (natural range <>) of std_logic;
 	constant test_vectors_data : test_vector_array :=
-		(20,	50	,	105,	138,	201,	222,	234);
+		(20,	50	,	105,	138,	201,	222,	234,	45,	34,	12,	65,	87,	128);
+	
 	constant test_vectors_address : test_vector_array :=
-		(0	,	1	,	2	,	3	,	4	,	3	,	6);
+		--(0	,	1	,	2	,	3	,	4	,	3	,	6	,	6	,	4	,	8	,	2	,	1	,	8);
+		(0	,	1	,	2	,	3	,	4	,	5	,	6	,	7	,	8	,	9	,	10	,	11	,	6);
+	
 	constant test_vectors_read : test_vector_array_bin :=
-		('0',	'0',	'0',	'0',	'0',	'1',	'1');
+		--('0',	'0',	'0',	'0',	'0',	'1',	'0',	'1',	'1',	'1',	'1',	'1',	'1');
+		('0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'1');
+		
 	constant test_vectors_write : test_vector_array_bin :=
-		('1',	'1',	'1',	'1',	'1',	'0',	'0');
+		('0',	'0',	'0',	'0',	'0',	'0',	'0',	'0'	,'0',	'0',	'0',	'0',	'0');
  
+	constant test_vectors_reset : test_vector_array_bin :=
+		('1',	'1',	'1',	'1',	'1',	'1',	'1',	'1'	,'1',	'1',	'1',	'1',	'0');
+		
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
@@ -122,6 +129,7 @@ BEGIN
 			tbaddress <= STD_LOGIC_VECTOR(TO_UNSIGNED( test_vectors_address(i), 8 ) );
 			tbdata_read <= STD_LOGIC(test_vectors_read(i));
 			tbdata_write <= STD_LOGIC( test_vectors_write(i));
+			tbreset <= STD_LOGIC( test_vectors_reset(i));
 			-- wait for calculation
 			wait for wait_time;
 		end loop;

@@ -57,9 +57,7 @@ begin
 				output <= ram(to_integer(unsigned(address)));
 			end if;
 		else
-			for i in 0 to ram_table'length loop 
-				ram(to_integer(unsigned(std_logic_vector(to_unsigned(i,8))))) <= std_logic_vector(to_unsigned(i,8));
-			end loop;
+			ram(to_integer(unsigned(address))) <= address;
 		end if;
 	end if;
 	end process ram_process;
