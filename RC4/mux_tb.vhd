@@ -30,7 +30,7 @@ USE ieee.std_logic_1164.ALL;
  
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---USE ieee.numeric_std.ALL;
+USE ieee.numeric_std.ALL;
  
 ENTITY mux_tb IS
 END mux_tb;
@@ -51,7 +51,7 @@ ARCHITECTURE behavior OF mux_tb IS
 
    --Inputs
    signal mux_input_1 : std_logic_vector(7 downto 0) := (others => '0');
-   signal mux_input_2 : std_logic_vector(7 downto 0) := (others => '0');
+   signal mux_input_2 : std_logic_vector(7 downto 0) := (others => '1');
    signal mux_swith : std_logic := '0';
 
  	--Outputs
@@ -61,6 +61,12 @@ ARCHITECTURE behavior OF mux_tb IS
  
    constant clock_period : time := 10 ns;
  
+	--Test vectors
+	type test_vector_array_bin is array (natural range <>) of std_logic;
+		
+	constant test_vectors_switch : test_vector_array_bin :=
+		('0',	'1');
+		
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
@@ -77,10 +83,11 @@ BEGIN
       -- hold reset state for 100 ns.
       wait for 100 ns;	
 
-      wait for clock_period*10;
 
       -- insert stimulus here 
 
+			mux_swith <= STD_LOGIC( test_vectors_switch(0));
+		
       wait;
    end process;
 

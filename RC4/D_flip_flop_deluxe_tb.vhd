@@ -30,7 +30,7 @@ USE ieee.std_logic_1164.ALL;
  
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---USE ieee.numeric_std.ALL;
+USE ieee.numeric_std.ALL;
  
 ENTITY D_flip_flop_deluxe_tb IS
 END D_flip_flop_deluxe_tb;
@@ -39,47 +39,62 @@ ARCHITECTURE behavior OF D_flip_flop_deluxe_tb IS
  
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT D_flip_flop_deluxe
-    PORT(
-         val : IN  std_logic_vector(7 downto 0);
-         clk : IN  std_logic;
-         reset : IN  std_logic;
-         enable : IN  std_logic;
-         output : OUT  std_logic_vector(7 downto 0)
-        );
+	COMPONENT D_flip_flop_deluxe
+	generic (
+		word_size : natural := 8);
+	Port ( 
+		D : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
+		clock : in  STD_LOGIC;
+		reset : in  STD_LOGIC;
+		enable : in  STD_LOGIC;
+		Q : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
     END COMPONENT;
     
 
    --Inputs
-   signal val : std_logic_vector(7 downto 0) := (others => '0');
-   signal clk : std_logic := '0';
+   signal D : std_logic_vector(7 downto 0) := (others => '0');
+   signal clock : std_logic := '0';
    signal reset : std_logic := '0';
    signal enable : std_logic := '0';
 
  	--Outputs
-   signal output : std_logic_vector(7 downto 0);
+   signal Q : std_logic_vector(7 downto 0);
 
    -- Clock period definitions
-   constant clk_period : time := 10 ns;
+   constant clock_period : time := 10 ns;
  
+	--Test vectors
+	type test_vector_array is array (natural range <>)	of natural;
+	type test_vector_array_bin is array (natural range <>) of std_logic;
+
+	constant test_vectors_D : test_vector_array :=
+		(3	,	6	,	9	,	15	,	12	,	124,	54	,	232);
+		
+	constant test_vectors_reset : test_vector_array_bin :=
+		('0',	'0',	'0',	'1',	'0',	'0',	'0',	'0');
+		
+	constant test_vectors_enable : test_vector_array_bin :=
+		('0',	'0',	'1',	'1',	'1',	'0',	'1',	'1');
+ 
+
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
    uut: D_flip_flop_deluxe PORT MAP (
-          val => val,
-          clk => clk,
+          D => D,
+          clock => clock,
           reset => reset,
           enable => enable,
-          output => output
+          Q => Q
         );
 
    -- Clock process definitions
    clk_process :process
    begin
-		clk <= '0';
-		wait for clk_period/2;
-		clk <= '1';
-		wait for clk_period/2;
+		clock <= '0';
+		wait for clock_period/2;
+		clock <= '1';
+		wait for clock_period/2;
    end process;
  
 
@@ -89,10 +104,15 @@ BEGIN
       -- hold reset state for 100 ns.
       wait for 100 ns;	
 
-      wait for clk_period*10;
-
       -- insert stimulus here 
 
+		for i in test_vectors_enable'range loop
+			enable <= STD_LOGIC( test_vectors_enable(i));
+			reset <= STD_LOGIC( test_vectors_reset(i));
+			D <= STD_LOGIC_VECTOR(TO_UNSIGNED( test_vectors_D(i), 8 ) );
+			wait for clock_period;
+		end loop;
+		
       wait;
    end process;
 

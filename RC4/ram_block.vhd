@@ -48,19 +48,16 @@ begin
 
 	ram_process: process(clock) is
 	begin
-	if(rising_edge(clock)) then
-		if(reset='0') then
-			if(data_write='1') then
-				ram(to_integer(unsigned(address))) <= data;			
-			end if;
-			if(data_read='1') then
-				output <= ram(to_integer(unsigned(address)));
-			end if;
-		else
-			ram(to_integer(unsigned(address))) <= address;
+	if(reset='0') then
+		if(data_write='1') then
+			ram(to_integer(unsigned(address))) <= data;			
 		end if;
+		if(data_read='1') then
+			output <= ram(to_integer(unsigned(address)));
+		end if;
+	else
+		ram(to_integer(unsigned(address))) <= address;
 	end if;
 	end process ram_process;
 	
 end Behavioral;
-

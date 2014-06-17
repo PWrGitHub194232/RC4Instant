@@ -52,6 +52,7 @@ entity storage_unit is
 		j_reset : in  STD_LOGIC;
 		t_enable : in  STD_LOGIC;
 		t_reset : in  STD_LOGIC;
+		inputPlainText : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
 		stream : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
 end storage_unit;
 
@@ -72,7 +73,6 @@ end component;
 signal Kbox_key_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 
 -- Kbox input signals
-
 
 component mux is
 	port(
@@ -159,12 +159,22 @@ end component;
 -- Sbox output signals
 signal Sbox_si_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 signal Sbox_sj_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+signal Sbox_st_outSignal : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
 
 -- Sbox input signals
 --DFF_Si_outSignal -> Sj
 --Add_jKS_outSignal -> j
 --DFF_Sj_outSignal -> Si
 -- DFFD_t_outSignal -> t
+
+component Xxor is
+	Port (
+		clk			: in std_logic;
+		chipherText	: in std_logic_vector(word_size-1 downto 0);
+		plainText 	: in std_logic_vector(word_size-1 downto 0);
+		output		: out std_logic_vector(word_size-1 downto 0));
+end component;
+
 
 
 begin
@@ -229,7 +239,7 @@ port map (
 	s_box_counter_t => DFFD_t_outSignal,
 	s_box_out_Si => Sbox_si_outSignal,
 	s_box_out_Sj => Sbox_sj_outSignal,
-	s_box_out_St => stream
+	s_box_out_St => Sbox_st_outSignal
 );
 
 ff_Si : D_flip_flop
@@ -260,6 +270,14 @@ port map (
 	reset => t_reset,
 	enable => t_enable,
 	Q => DFFD_t_outSignal
+);
+
+main_xor : Xxor
+port map (
+	clk => clock,
+	chipherText => Sbox_st_outSignal,
+	plainText => inputPlainText,
+	output => stream
 );
 
 end Behavioral;

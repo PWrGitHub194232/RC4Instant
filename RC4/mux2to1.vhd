@@ -29,6 +29,10 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
+-- Multiplekser akurat w wersji bardzo prostej.
+-- Jeśli switch = '0' to wybierz input_1
+-- Jeśli switch = '1' to wybierz input 2 ('dolne' wejście)
+
 entity mux is
 	generic (
 		word_size : natural := 8);

@@ -50,9 +50,6 @@ ARCHITECTURE behavior OF ram_block_tb IS
          output : OUT  std_logic_vector(7 downto 0)
         );
     END COMPONENT;
-    
-	-- wait period 
-	constant wait_time : time:= 10 ns;
 	
    --Inputs
    signal clock : std_logic := '0';
@@ -60,7 +57,7 @@ ARCHITECTURE behavior OF ram_block_tb IS
    signal tbaddress : std_logic_vector(7 downto 0) := (others => '0');
    signal tbdata_read : std_logic := '0';
    signal tbdata_write : std_logic := '0';
-   signal tbreset : std_logic := '1';
+   signal tbreset : std_logic := '0';
 
  	--Outputs
    signal tboutput : std_logic_vector(7 downto 0);
@@ -75,18 +72,21 @@ ARCHITECTURE behavior OF ram_block_tb IS
 		(20,	50	,	105,	138,	201,	222,	234,	45,	34,	12,	65,	87,	128);
 	
 	constant test_vectors_address : test_vector_array :=
-		--(0	,	1	,	2	,	3	,	4	,	3	,	6	,	6	,	4	,	8	,	2	,	1	,	8);
-		(0	,	1	,	2	,	3	,	4	,	5	,	6	,	7	,	8	,	9	,	10	,	11	,	6);
+		(0	,	1	,	2	,	3	,	4	,	3	,	6	,	6	,	4	,	8	,	2	,	1	,	8);
+		--(0	,	1	,	2	,	3	,	4	,	5	,	6	,	7	,	8	,	9	,	10	,	11	,	6);
+		
 	
 	constant test_vectors_read : test_vector_array_bin :=
-		--('0',	'0',	'0',	'0',	'0',	'1',	'0',	'1',	'1',	'1',	'1',	'1',	'1');
-		('0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'1');
+		('0',	'0',	'0',	'0',	'0',	'1',	'0',	'0',	'0',	'1',	'1',	'1',	'0');
+		--('0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'0',	'1');
 		
 	constant test_vectors_write : test_vector_array_bin :=
-		('0',	'0',	'0',	'0',	'0',	'0',	'0',	'0'	,'0',	'0',	'0',	'0',	'0');
+		('1',	'1',	'1',	'1',	'1',	'0',	'1',	'1',	'1',	'0',	'0',	'0',	'1');
+		--('0',	'0',	'0',	'0',	'0',	'0',	'0',	'0'	,'0',	'0',	'0',	'0',	'0');
  
 	constant test_vectors_reset : test_vector_array_bin :=
-		('1',	'1',	'1',	'1',	'1',	'1',	'1',	'1'	,'1',	'1',	'1',	'1',	'0');
+		('0',	'0',	'0',	'0',	'0',	'0',	'0',	'0'	,'0',	'0',	'0',	'0',	'0');
+		--('1',	'1',	'1',	'1',	'1',	'1',	'1',	'1'	,'1',	'1',	'1',	'1',	'0');
 		
 BEGIN
  
@@ -115,23 +115,23 @@ BEGIN
    stim_proc: process
    begin		
       -- hold reset state for 100 ns.
-     -- wait for 100 ns;	
+     wait for 100 ns;	
 
       --wait for clock_period*10;
-		wait for wait_time*5;	-- let the UNIT settle down
+		--wait for wait_time*5;	-- let the UNIT settle down
 		
       -- insert stimulus here 
 	
 		-- begin looping through test vectors
 		for i in test_vectors_data' range loop
 			-- load data into design
-			tbdata <= STD_LOGIC_VECTOR(TO_UNSIGNED( test_vectors_data(i), 8 ) );
-			tbaddress <= STD_LOGIC_VECTOR(TO_UNSIGNED( test_vectors_address(i), 8 ) );
+			tbreset <= STD_LOGIC( test_vectors_reset(i));
 			tbdata_read <= STD_LOGIC(test_vectors_read(i));
 			tbdata_write <= STD_LOGIC( test_vectors_write(i));
-			tbreset <= STD_LOGIC( test_vectors_reset(i));
+			tbaddress <= STD_LOGIC_VECTOR(TO_UNSIGNED( test_vectors_address(i), 8 ) );
+			tbdata <= STD_LOGIC_VECTOR(TO_UNSIGNED( test_vectors_data(i), 8 ) );
 			-- wait for calculation
-			wait for wait_time;
+			wait for clock_period/2;
 		end loop;
 
       wait;

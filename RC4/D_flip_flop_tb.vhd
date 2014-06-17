@@ -30,7 +30,7 @@ USE ieee.std_logic_1164.ALL;
  
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---USE ieee.numeric_std.ALL;
+USE ieee.numeric_std.ALL;
  
 ENTITY D_flip_flop_tb IS
 END D_flip_flop_tb;
@@ -58,6 +58,13 @@ ARCHITECTURE behavior OF D_flip_flop_tb IS
    -- Clock period definitions
    constant clock_period : time := 10 ns;
  
+ --Test vectors
+	type test_vector_array is array (natural range <>)	of natural;
+
+ 	constant test_vectors_D : test_vector_array :=
+		(0,4,7,5,3,23,222);
+
+
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
@@ -83,10 +90,14 @@ BEGIN
       -- hold reset state for 100 ns.
       wait for 100 ns;	
 
-      wait for clock_period*10;
-
+		
       -- insert stimulus here 
 
+		for i in test_vectors_D'range loop
+			D <= STD_LOGIC_VECTOR(TO_UNSIGNED( test_vectors_D(i), 8 ) );
+			wait for clock_period/2; -- Testowo clk/2
+		end loop;
+		
       wait;
    end process;
 

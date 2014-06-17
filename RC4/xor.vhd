@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date:    20:07:16 06/16/2014 
+-- Create Date:    14:42:46 06/17/2014 
 -- Design Name: 
--- Module Name:    D_flip_flop_deluxe - Behavioral 
+-- Module Name:    xor - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
@@ -29,31 +29,18 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity D_flip_flop_deluxe is
-	generic (
-		word_size : natural := 8);
-	Port ( 
-		D : in  STD_LOGIC_VECTOR (word_size-1 downto 0);
-		clock : in  STD_LOGIC;
-		reset : in  STD_LOGIC;
-		enable : in  STD_LOGIC;
-		Q : out  STD_LOGIC_VECTOR (word_size-1 downto 0));
-end D_flip_flop_deluxe;
+entity Xxor is
+	generic(
+		word_size	: integer:=8);
+	port(	
+		clk			: in std_logic;
+		chipherText	: in std_logic_vector(word_size-1 downto 0);
+		plainText 	: in std_logic_vector(word_size-1 downto 0);
+		output		: out std_logic_vector(word_size-1 downto 0));
+end Xxor;
 
-architecture Behavioral of D_flip_flop_deluxe is
-
-signal zero_vect : STD_LOGIC_VECTOR (word_size-1 downto 0) := (others => '0');
+architecture Behavioral of Xxor is
 
 begin
-	dffd_process: process (clock) is
-	begin
-		if enable='0' then 
-			null;
-		elsif (reset = '1') then
-			Q <= zero_vect;
-		elsif rising_edge(clock) then
-			Q <= D;
-		end if;
-	end process;
-	
+	output <= chipherText xor plainText;
 end Behavioral;

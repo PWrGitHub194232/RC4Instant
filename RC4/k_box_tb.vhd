@@ -121,8 +121,6 @@ BEGIN
       -- hold reset state for 100 ns.
       wait for 100 ns;	
 
-      wait for k_box_clk_period*10;
-
 		-- insert stimulus here 
 	
 
@@ -138,9 +136,8 @@ BEGIN
 
 		for i in test_vectors_address'range loop
 			k_box_address <= STD_LOGIC_VECTOR(TO_UNSIGNED( test_vectors_address(i), 8 ) );
-			wait for k_box_clk_period;
-		end loop;
-		
+			wait for k_box_clk_period/2;
+		end loop;	
 		
       wait;
    end process;
