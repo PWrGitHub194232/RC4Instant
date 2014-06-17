@@ -42,7 +42,7 @@ ARCHITECTURE behavior OF storage_unit_tb IS
     COMPONENT storage_unit
     PORT(
          clock : IN  std_logic;
-         key_input_Kbox : IN  std_logic_vector(126 downto 0);
+         key_input_Kbox : IN  std_logic;
          key_read_Kbox : IN  std_logic;
          key_write_Kbox : IN  std_logic;
          reset_Kbox : IN  std_logic;

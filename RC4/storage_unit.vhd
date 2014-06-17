@@ -35,7 +35,7 @@ entity storage_unit is
 		s_box_size : natural := 8);
 	Port (
 		clock : in  STD_LOGIC;
-		key_input_Kbox : in  STD_LOGIC_VECTOR (key_size-1 downto 0);
+		key_input_Kbox : in  STD_LOGIC;
 		key_read_Kbox : in  STD_LOGIC;
 		key_write_Kbox : in  STD_LOGIC;
 		reset_Kbox : in  STD_LOGIC;
@@ -59,7 +59,7 @@ architecture Behavioral of storage_unit is
 
 component k_box is
 	Port ( 
-		k_box_key_input : in  STD_LOGIC_VECTOR (key_size-1 downto 0);
+		k_box_key_input : in  STD_LOGIC;
 		k_box_key_read : in  STD_LOGIC;
 		k_box_key_write : in  STD_LOGIC;
 		k_box_address : in  STD_LOGIC_VECTOR (s_box_size-1 downto 0);
